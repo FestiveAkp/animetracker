@@ -29,6 +29,10 @@ def top_100_popularity():
     # Iterate through latest popularity list
     result_list = []
     for current_position, current_anime in enumerate(current_list):
+        # Only consider the first 100 shows
+        if current_position > 100:
+            break
+
         # Store current anime's title
         title = current_anime['title']['english']
 
