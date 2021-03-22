@@ -82,6 +82,6 @@ It is now the {ordinal(current_position + 1)} most popular anime and has {curren
 
 if __name__ == '__main__':
     load_dotenv()
-    logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
     top_100_changes = analysis.top_100_popularity()
     schedule(top_100_changes)
