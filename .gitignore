@@ -1,0 +1,8 @@
+.env
+top100.json
+
+.vscode/
+
+__pycache__/
+*.py[cod]
+*$py.class
