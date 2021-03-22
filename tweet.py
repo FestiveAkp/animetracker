@@ -15,10 +15,10 @@ def schedule(changes):
     Make sure that each tweet gets a chance to be sent before the next bot cycle occurs, i.e.
     if the cycle occurs every 8 hours, tweets should be scheduled in the next 8 hours
     '''
-    # Send at maximum three tweets, one now, one in 3 hours, and another in 6 hours
+    # Goal is to send 5 tweets every 12 hour cycle, one tweet now, one in 2.25 hours, etc.
     print(f'Current time is {datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")}')
-    wait = 5
-    for i in range(3):
+    wait = 3
+    for i in range(5):
         if i >= len(changes):
             break
 
@@ -27,8 +27,8 @@ def schedule(changes):
         timer = threading.Timer(wait, popularity_change, [changes[i]])
         timer.start()
 
-        # Increase wait between threads, so each tweet is sent 3 hours after each other
-        wait += 10800
+        # Increase wait between threads, so each tweet is sent 2.25 hours after each other
+        wait += 8100
     
     print('Done.')
 
@@ -71,7 +71,7 @@ It is now the {ordinal(current_position + 1)} most popular anime and has {curren
     '''
 
     # Tweet tweet
-    api.update_status(tweet)
+    # api.update_status(tweet)
 
     current_datetime = datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
     print(f'-- Tweeted at {current_datetime}')
