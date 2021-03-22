@@ -2,15 +2,18 @@
 import os
 import requests
 import json
+import logging
 from datetime import datetime
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 def run():
     '''
     Performs the ingest routine, fetching the top 100 anime from 
     the AniList API and storing the response in our local data file
     '''
-    print('Running ingest...')
+    logger.info('Running ingest...')
 
     API_URL = os.environ.get('ANILIST_API_URL')
     
@@ -79,8 +82,7 @@ def run():
         json.dump(store, f)
         f.truncate()
 
-    print('Done.')
-
 if __name__ == '__main__':
     load_dotenv()
+    logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
     run()

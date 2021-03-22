@@ -1,12 +1,15 @@
 # %%
 import os
 import threading
+import logging
 import tweepy
 import datetime
 from dotenv import load_dotenv
 
 import analysis
 from lib.ordinal import ordinal
+
+logger = logging.getLogger(__name__)
 
 def schedule(changes):
     '''
@@ -16,21 +19,21 @@ def schedule(changes):
     if the cycle occurs every 8 hours, tweets should be scheduled in the next 8 hours
     '''
     # Goal is to send 5 tweets every 12 hour cycle, one tweet now, one in 2.25 hours, etc.
-    print(f'Current time is {datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")}')
+    # print(f'Current time is {datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")}')
     wait = 3
     for i in range(5):
         if i >= len(changes):
             break
 
         # Create thread that waits, then sends a tweet
-        print(f"Queueing tweet to be sent in {datetime.timedelta(seconds=wait)} : *{changes[i]['current']['title']['romaji']}* passes *{changes[i]['surpassed']['title']['romaji']}*")
+        logger.info(f"Queueing tweet to be sent in {datetime.timedelta(seconds=wait)} : *{changes[i]['current']['title']['romaji']}* passes *{changes[i]['surpassed']['title']['romaji']}*")
         timer = threading.Timer(wait, popularity_change, [changes[i]])
         timer.start()
 
         # Increase wait between threads, so each tweet is sent 2.25 hours after each other
         wait += 8100
     
-    print('Done.')
+    logger.info('Tweet scheduling complete')
 
 def popularity_change(change):
     '''
@@ -74,10 +77,11 @@ It is now the {ordinal(current_position + 1)} most popular anime and has {curren
     # api.update_status(tweet)
 
     current_datetime = datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
-    print(f'-- Tweeted at {current_datetime}')
-    print(tweet)
+    logger.info(f'Just tweeted:')
+    logger.info(tweet)
 
 if __name__ == '__main__':
     load_dotenv()
+    logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
     top_100_changes = analysis.top_100_popularity()
     schedule(top_100_changes)

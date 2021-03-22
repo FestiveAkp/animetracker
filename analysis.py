@@ -1,7 +1,10 @@
 # %%
 import os
 import json
+import logging
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 def top_100_popularity():
     '''
@@ -10,7 +13,7 @@ def top_100_popularity():
     list and the previously fetched list, returning the results
     as a list to be tweeted out
     '''
-    print('Performing analysis...')
+    logger.info('Performing analysis...')
 
     FILE_NAME = os.environ.get('FILE_NAME')
 
@@ -46,14 +49,11 @@ def top_100_popularity():
                 'surpassed': current_list[previous_position]
             })
 
-            print(f"Discovered that *{current_anime['title']['romaji']}* passes *{current_list[previous_position]['title']['romaji']}*")
-    
-    print('Done.')
+            logger.info(f"Discovered that *{current_anime['title']['romaji']}* passes *{current_list[previous_position]['title']['romaji']}*")
 
     return result_list
 
 if __name__ == '__main__':
     load_dotenv()
-
+    logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
     r = top_100_popularity()
-    
