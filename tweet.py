@@ -74,7 +74,7 @@ It is now the {ordinal(current_position + 1)} most popular anime and has {curren
     '''
 
     # Tweet tweet
-    # api.update_status(tweet)
+    api.update_status(tweet)
 
     current_datetime = datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
     logger.info(f'Just tweeted:')
