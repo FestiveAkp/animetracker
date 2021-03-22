@@ -45,6 +45,8 @@ def top_100_popularity():
                 'current': current_anime,
                 'surpassed': current_list[previous_position]
             })
+
+            print(f"Discovered that *{current_anime['title']['romaji']}* passes *{current_list[previous_position]['title']['romaji']}*")
     
     print('Done.')
 
@@ -54,4 +56,4 @@ if __name__ == '__main__':
     load_dotenv()
 
     r = top_100_popularity()
-    print(r)
+    
