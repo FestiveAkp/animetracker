@@ -2,53 +2,52 @@
 import os
 import json
 
-from dotenv import load_dotenv
+def top_100_popularity():
+    '''
+    Performs the top 100 popularity analysis, detecting
+    changes in the ranking of each anime between the most recent
+    list and the previously fetched list, returning the results
+    as a list to be tweeted out
+    '''
+    FILE_NAME = os.environ.get('FILE_NAME')
 
-from lib.ordinal import ordinal
+    # Import data from JSON file
+    with open(FILE_NAME, 'r') as f:
+        store = json.load(f)
 
-load_dotenv()
-FILE_NAME = os.environ.get('FILE_NAME')
+    # Get latest and previous popularity ranking
+    current_list = store[-1]['media']
+    previous_list = store[-2]['media']
 
-# Import data from JSON file
-with open(FILE_NAME, 'r') as f:
-    store = json.load(f)
+    # Check for changes in the popularity ranking
+    # Iterate through latest popularity list
+    result_list = []
+    for current_position, current_anime in enumerate(current_list):
+        # Store current anime's title
+        title = current_anime['title']['english']
 
-# Get latest and previous popularity ranking
-current_list = store[-1]['data']['Page']['media']
-previous_list = store[-2]['data']['Page']['media']
+        # Get current anime's previous popularity position (its index in the list)
+        previous_position = 0
+        for j, current_anime in enumerate(previous_list):
+            if current_anime['title']['english'] == title:
+                previous_position = j
+                break
 
-# Check for changes in the popularity ranking
-# Iterate through latest popularity list
-for current_position, anime in enumerate(current_list):
-    # Store current anime's title and position
-    title = anime['title']['english']
+        # Check if title moved up in popularity rankings
+        if current_position < previous_position:
+            current_anime['position'] = current_position
+            current_list[previous_position]['position'] = previous_position
 
-    # Get current anime's previous popularity position (its index in the list)
-    previous_position = 0
-    for j, anime in enumerate(previous_list):
-        if anime['title']['english'] == title:
-            previous_position = j
-            break
+            result_list.append({
+                'current': current_anime,
+                'surpassed': current_list[previous_position]
+            })
+    
+    return result_list
 
-    # Check if title moved up in popularity rankings
-    if current_position < previous_position:
-        current_popularity = anime['popularity']
-        current_url = anime['siteUrl']
-        current_hashtags = anime['hashtag'] if anime['hashtag'] is not None else ''
-
-        surpassed_anime = current_list[previous_position]
-        surpassed_title = surpassed_anime['title']['english']
-        surpassed_hashtags = surpassed_anime['hashtag'] if surpassed_anime['hashtag'] is not None else ''
-        
-        tweet = f'''
-*{title}* just passed *{surpassed_title}* in popularity on #AniList 🎉
-
-It is now the {ordinal(current_position + 1)} most popular anime and has {current_popularity} members ✨
-
-{current_hashtags} {surpassed_hashtags}
-
-{current_url}
-        '''
-
-        print(tweet)
-        print('\n')
+if __name__ == '__main__':
+    from dotenv import load_dotenv
+    load_dotenv()
+    
+    r = top_100_popularity()
+    print(r)
