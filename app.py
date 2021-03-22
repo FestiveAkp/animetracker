@@ -22,7 +22,8 @@ if __name__ == '__main__':
     load_dotenv()
 
     # Schedule bot routine
-    schedule.every(12).hours.do(main)
+    schedule.every().day.at('05:00').do(main)
+    schedule.every().day.at('17:00').do(main)
 
     # Run the bot
     while True:
