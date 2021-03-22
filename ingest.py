@@ -2,14 +2,16 @@
 import os
 import requests
 import json
-
 from datetime import datetime
+from dotenv import load_dotenv
 
 def run():
     '''
     Performs the ingest routine, fetching the top 100 anime from 
     the AniList API and storing the response in our local data file
     '''
+    print('Running ingest...')
+
     API_URL = os.environ.get('ANILIST_API_URL')
     
     # Define GraphQL query (grab a page of anime titles sorted by popularity)
@@ -77,9 +79,8 @@ def run():
         json.dump(store, f)
         f.truncate()
 
+    print('Done.')
 
 if __name__ == '__main__':
-    from dotenv import load_dotenv
-    
     load_dotenv()
     run()

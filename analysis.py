@@ -1,6 +1,7 @@
 # %%
 import os
 import json
+from dotenv import load_dotenv
 
 def top_100_popularity():
     '''
@@ -9,6 +10,8 @@ def top_100_popularity():
     list and the previously fetched list, returning the results
     as a list to be tweeted out
     '''
+    print('Performing analysis...')
+
     FILE_NAME = os.environ.get('FILE_NAME')
 
     # Import data from JSON file
@@ -43,11 +46,12 @@ def top_100_popularity():
                 'surpassed': current_list[previous_position]
             })
     
+    print('Done.')
+
     return result_list
 
 if __name__ == '__main__':
-    from dotenv import load_dotenv
     load_dotenv()
-    
+
     r = top_100_popularity()
     print(r)

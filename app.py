@@ -1,5 +1,4 @@
 # %%
-import threading
 import schedule
 import time
 from dotenv import load_dotenv
@@ -9,27 +8,14 @@ import analysis
 import tweet
 
 def main():
-    print('Running ingest...')
+    # Ingest data from AniList API
     ingest.run()
 
-    print('Performing analysis...')
+    # Perform analysis
     top_100_changes = analysis.top_100_popularity()
 
-    # Send at maximum three tweets, one now, one in 3 hours, and another in 6 hours
-    wait = 1
-    for i in range(3):
-        if i >= len(top_100_changes):
-            break
-
-        # Create thread that waits, then sends a tweet
-        print('Queueing tweet...')
-        timer = threading.Timer(wait, tweet.popularity_change, [top_100_changes[i]])
-        timer.start()
-
-        # Increase wait between threads, so each tweet is sent 3 hours after each other
-        wait += 10800
-    
-    print('Done.')
+    # Schedule tweets to be sent
+    tweet.schedule(top_100_changes)
 
 if __name__ == '__main__':
     # Load environment variables
