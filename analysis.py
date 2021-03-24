@@ -38,8 +38,8 @@ def top_100_popularity():
 
         # Get current anime's previous popularity position (its index in the list)
         previous_position = 0
-        for j, current_anime in enumerate(previous_list):
-            if current_anime['title']['english'] == title:
+        for j, previous_anime in enumerate(previous_list):
+            if previous_anime['title']['english'] == title:
                 previous_position = j
                 break
 
