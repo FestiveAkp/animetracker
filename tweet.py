@@ -19,15 +19,11 @@ def schedule(changes):
     if the cycle occurs every 8 hours, tweets should be scheduled in the next 8 hours
     '''
     # Goal is to send 5 tweets every 12 hour cycle, one tweet now, one in 2.25 hours, etc.
-    # print(f'Current time is {datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")}')
     wait = 3
-    for i in range(5):
-        if i >= len(changes):
-            break
-
+    for change in changes:
         # Create thread that waits, then sends a tweet
-        logger.info(f"Queueing tweet to be sent in {datetime.timedelta(seconds=wait)} : *{changes[i]['current']['title']['romaji']}* passes *{changes[i]['surpassed']['title']['romaji']}*")
-        timer = threading.Timer(wait, popularity_change, [changes[i]])
+        logger.info(f"Queueing tweet to be sent in {datetime.timedelta(seconds=wait)} : *{change['current']['title']['romaji']}* passes *{change['surpassed']['title']['romaji']}*")
+        timer = threading.Timer(wait, popularity_change, [change])
         timer.start()
 
         # Increase wait between threads, so each tweet is sent 2.25 hours after each other
@@ -62,13 +58,19 @@ def popularity_change(change):
     surpassed_title = surpassed_anime['title']['english']
     surpassed_hashtags = surpassed_anime['hashtag'] if surpassed_anime['hashtag'] is not None else ''
 
+    hashtags = '#AniList'
+    if surpassed_hashtags:
+        hashtags = f'{surpassed_hashtags} {hashtags}'
+    if current_hashtags:
+        hashtags = f'{current_hashtags} {hashtags}'
+
     # Build tweet
     tweet = f'''
 *{current_title}* just passed *{surpassed_title}* in popularity on @AniListco 🎉
 
 It is now the {ordinal(current_position + 1)} most popular anime and has {current_popularity} members ✨
 
-#AniList {current_hashtags} {surpassed_hashtags}
+{hashtags}
 
 {current_url}
     '''
