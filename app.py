@@ -25,8 +25,7 @@ if __name__ == '__main__':
     logging.info('Bot started')
 
     # Schedule bot routine
-    schedule.every().day.at('05:00').do(main)
-    schedule.every().day.at('17:00').do(main)
+    schedule.every().day.at('09:00').do(main)
 
     # Run the bot
     while True:
