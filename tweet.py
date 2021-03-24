@@ -4,6 +4,7 @@ import threading
 import logging
 import tweepy
 import datetime
+import textwrap
 from dotenv import load_dotenv
 
 import analysis
@@ -18,12 +19,16 @@ def schedule(changes):
     Make sure that each tweet gets a chance to be sent before the next bot cycle occurs, i.e.
     if the cycle occurs every 8 hours, tweets should be scheduled in the next 8 hours
     '''
-    # Goal is to send 5 tweets every 12 hour cycle, one tweet now, one in 2.25 hours, etc.
+    # Goal is to send all tweets every 24 hour cycle, one tweet now, one in 2.25 hours, etc.
     wait = 3
     for change in changes:
-        # Create thread that waits, then sends a tweet
         logger.info(f"Queueing tweet to be sent in {datetime.timedelta(seconds=wait)} : *{change['current']['title']['romaji']}* passes *{change['surpassed']['title']['romaji']}*")
-        timer = threading.Timer(wait, popularity_change, [change])
+        
+        # Construct tweet
+        tweet = construct_popularity_change_tweet(change)
+
+        # Create thread that waits, then sends it
+        timer = threading.Timer(wait, sendTweet, [tweet])
         timer.start()
 
         # Increase wait between threads, so each tweet is sent 2.25 hours after each other
@@ -31,22 +36,10 @@ def schedule(changes):
     
     logger.info('Tweet scheduling complete')
 
-def popularity_change(change):
+def construct_popularity_change_tweet(change):
     '''
-    Constructs a single ranking change tweet and posts it using the Twitter API
+    Constructs a single ranking change tweet
     '''
-    # Load environment variables
-    CONSUMER_KEY = os.environ.get('TWITTER_API_KEY')
-    CONSUMER_SECRET = os.environ.get('TWITTER_API_SECRET')
-    ACCESS_TOKEN = os.environ.get('TWITTER_ACCESS_TOKEN')
-    ACCESS_SECRET = os.environ.get('TWITTER_ACCESS_SECRET')
-
-    # Authorize and connect to Twitter API
-    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
-    api = tweepy.API(auth)
-
-    # Get analysis data for tweet
     current_anime = change['current']
     current_title = current_anime['title']['english'] if current_anime['title']['english'] is not None else current_anime['title']['romaji']
     current_popularity = current_anime['popularity']
@@ -65,25 +58,45 @@ def popularity_change(change):
         hashtags = f'{current_hashtags} {hashtags}'
 
     # Build tweet
-    tweet = f'''
-*{current_title}* just passed *{surpassed_title}* in popularity on @AniListco 🎉
+    tweet = textwrap.dedent(f'''
+        *{current_title}* just passed *{surpassed_title}* in popularity on @AniListco 🎉
 
-It is now the {ordinal(current_position + 1)} most popular anime and has {current_popularity} members ✨
+        It is now the {ordinal(current_position + 1)} most popular anime and has {current_popularity} members ✨
 
-{hashtags}
+        {hashtags}
 
-{current_url}
+        {current_url}
+    ''')
+
+    logger.info(f'Constructed tweet:')
+    logger.info(tweet)
+
+    return tweet
+
+def sendTweet(tweet):
     '''
+    Submits a fully formed tweet to the Twitter API
+    '''
+    # Load environment variables
+    CONSUMER_KEY = os.environ.get('TWITTER_API_KEY')
+    CONSUMER_SECRET = os.environ.get('TWITTER_API_SECRET')
+    ACCESS_TOKEN = os.environ.get('TWITTER_ACCESS_TOKEN')
+    ACCESS_SECRET = os.environ.get('TWITTER_ACCESS_SECRET')
+
+    # Authorize and connect to Twitter API
+    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+    api = tweepy.API(auth)
 
     # Tweet tweet
     api.update_status(tweet)
 
-    current_datetime = datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
-    logger.info(f'Just tweeted:')
-    logger.info(tweet)
+    logger.log('Tweet sent successfully')
 
 if __name__ == '__main__':
     load_dotenv()
     logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
     top_100_changes = analysis.top_100_popularity()
-    schedule(top_100_changes)
+    for change in top_100_changes: 
+        construct_popularity_change_tweet(change)
+    # schedule(top_100_changes)
