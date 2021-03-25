@@ -91,7 +91,7 @@ def sendTweet(tweet):
     # Tweet tweet
     api.update_status(tweet)
 
-    logger.log('Tweet sent successfully')
+    logger.info('Tweet sent successfully')
 
 if __name__ == '__main__':
     load_dotenv()
