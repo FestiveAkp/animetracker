@@ -15,9 +15,8 @@ def top_100_popularity():
     '''
     logger.info('Performing analysis...')
 
-    FILE_NAME = os.environ.get('FILE_NAME')
-
     # Import data from JSON file
+    FILE_NAME = os.environ.get('FILE_NAME')
     with open(FILE_NAME, 'r') as f:
         store = json.load(f)
 
@@ -27,7 +26,7 @@ def top_100_popularity():
 
     # Check for changes in the popularity ranking
     # Iterate through latest popularity list
-    result_list = []
+    results = []
     for current_position, current_anime in enumerate(current_list):
         # Only consider the first 100 shows
         if current_position > 100:
@@ -48,14 +47,12 @@ def top_100_popularity():
             current_anime['position'] = current_position
             current_list[previous_position]['position'] = previous_position
 
-            result_list.append({
-                'current': current_anime,
-                'surpassed': current_list[previous_position]
-            })
+            # Keep track of results as current/surpassed tuples
+            results.append((current_anime, current_list[previous_position]))
 
             logger.info(f"Discovered that *{current_anime['title']['romaji']}* passes *{current_list[previous_position]['title']['romaji']}*")
 
-    return result_list
+    return results
 
 if __name__ == '__main__':
     load_dotenv()

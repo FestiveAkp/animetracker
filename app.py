@@ -16,8 +16,11 @@ def main():
     # Perform analysis
     top_100_changes = analysis.top_100_popularity()
 
+    # Create tweets
+    top_100_tweets = [tweet.construct_popularity_change_tweet(current, surpassed) for current, surpassed in top_100_changes]
+
     # Schedule tweets to be sent
-    tweet.schedule(top_100_changes)
+    tweet.schedule(top_100_tweets, 2.25)
 
 if __name__ == '__main__':
     # Load environment variables and set logging
