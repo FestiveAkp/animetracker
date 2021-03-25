@@ -1,4 +1,5 @@
 # %%
+import os
 import schedule
 import time
 import logging
@@ -25,7 +26,8 @@ if __name__ == '__main__':
     logging.info('Bot started')
 
     # Schedule bot routine
-    schedule.every().day.at('09:00').do(main)
+    START_TIME = os.environ.get('START_TIME')
+    schedule.every().day.at(START_TIME).do(main)
 
     # Run the bot
     while True:
