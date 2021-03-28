@@ -32,25 +32,21 @@ def top_100_popularity():
         if current_position > 100:
             break
 
-        # Store current anime's title
-        title = current_anime['title']['english']
-
         # Get current anime's previous popularity position (its index in the list)
         previous_position = 0
         for j, previous_anime in enumerate(previous_list):
-            if previous_anime['title']['english'] == title:
+            if previous_anime['title']['english'] == current_anime['title']['english']:
                 previous_position = j
                 break
 
         # Check if title moved up in popularity rankings
         if current_position < previous_position:
             current_anime['position'] = current_position
-            current_list[previous_position]['position'] = previous_position
 
             # Keep track of results as current/surpassed tuples
-            results.append((current_anime, current_list[previous_position]))
+            results.append((current_anime, current_list[current_position + 1]))
 
-            logger.info(f"Discovered that *{current_anime['title']['romaji']}* passes *{current_list[previous_position]['title']['romaji']}*")
+            logger.info(f"Discovered that *{current_anime['title']['romaji']}* passes *{current_list[current_position + 1]['title']['romaji']}*")
 
     return results
 
