@@ -37,14 +37,14 @@ def construct_popularity_change_tweet(current_anime, surpassed_anime):
     '''
     Constructs a single ranking change tweet
     '''
-    current_title = current_anime['title']['english'] if current_anime['title']['english'] is not None else current_anime['title']['romaji']
+    current_title = current_anime['title']['english'] if current_anime['title']['english'] else current_anime['title']['romaji']
     current_popularity = current_anime['popularity']
     current_position = current_anime['position']
     current_url = current_anime['siteUrl']
-    current_hashtags = current_anime['hashtag'] if current_anime['hashtag'] is not None else ''
+    current_hashtags = current_anime['hashtag'] if current_anime['hashtag'] else ''
 
-    surpassed_title = surpassed_anime['title']['english']
-    surpassed_hashtags = surpassed_anime['hashtag'] if surpassed_anime['hashtag'] is not None else ''
+    surpassed_title = surpassed_anime['title']['english'] if surpassed_anime['title']['english'] else surpassed_anime['title']['romaji']
+    surpassed_hashtags = surpassed_anime['hashtag'] if surpassed_anime['hashtag'] else ''
 
     hashtags = '#AniList'
     if surpassed_hashtags:
