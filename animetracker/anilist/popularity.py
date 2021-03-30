@@ -72,7 +72,7 @@ def ingest():
         page = response.json()['data']['Page']['media']
         data['media'] += page
     
-    FILE_NAME = 'top100_popularity.json'
+    FILE_NAME = 'al_top100_popularity.json'
 
     # If outfile doesn't exist, initialize one w/ empty JSON array
     if not os.path.exists(FILE_NAME):
@@ -98,7 +98,7 @@ def analysis():
     logger.info('Performing analysis...')
 
     # Import data from JSON file
-    FILE_NAME = 'top100_popularity.json'
+    FILE_NAME = 'al_top100_popularity.json'
     with open(FILE_NAME, 'r') as f:
         store = json.load(f)
 
