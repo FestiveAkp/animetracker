@@ -1,4 +1,5 @@
 import logging
+import os
 
 from dotenv import load_dotenv
 
@@ -18,4 +19,4 @@ def anilist_popularity():
     ap.ingest()
     results = ap.analysis()
     tweets = [ap.make_tweet(current, surpassed) for current, surpassed in results]
-    schedule_tweets(tweets, 2.5)
+    schedule_tweets(tweets, os.environ['ANILIST_POPULARITY_TWEET_INTERVAL'])
