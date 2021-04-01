@@ -39,7 +39,7 @@ def schedule_tweets(tweets, interval):
     out the tweets by the specified interval
     '''
     wait = 2
-    interval_seconds = interval * 60 * 60
+    interval_seconds = int(interval) * 60 * 60
     
     for i, tweet in enumerate(tweets):
         logger.info(f'Queueing tweet {i} to be sent in {datetime.timedelta(seconds=wait)}')
