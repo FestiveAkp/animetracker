@@ -15,3 +15,8 @@ To run the bot, install dependencies and run:
 ```bash
 $ python3 -m animetracker
 ```
+
+To run a single file (for debugging), add an `if __name__ == '__main__'` at the bottom and do:
+```bash
+$ python3 -m animetracker.<path>.<to>.<file>
+```

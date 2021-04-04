@@ -7,7 +7,7 @@ import textwrap
 
 from dotenv import load_dotenv
 
-from ..helpers import ordinal
+import animetracker.helpers as helpers
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -141,22 +141,26 @@ def make_tweet(current_anime, surpassed_anime):
     current_popularity = current_anime['popularity']
     current_position = current_anime['position']
     current_url = current_anime['siteUrl']
-    current_hashtags = current_anime['hashtag'] if current_anime['hashtag'] else ''
+    current_hashtags = helpers.get_hashtag(current_anime)
 
     surpassed_title = surpassed_anime['title']['english'] if surpassed_anime['title']['english'] else surpassed_anime['title']['romaji']
-    surpassed_hashtags = surpassed_anime['hashtag'] if surpassed_anime['hashtag'] else ''
+    surpassed_hashtags = helpers.get_hashtag(surpassed_anime)
 
-    hashtags = '#AniList'
-    if surpassed_hashtags:
-        hashtags = f'{surpassed_hashtags} {hashtags}'
-    if current_hashtags:
+    # Check if hashtags for both anime are the same
+    hashtags = ''
+    if current_hashtags == surpassed_hashtags:
         hashtags = f'{current_hashtags} {hashtags}'
+    else:
+        if surpassed_hashtags:
+            hashtags = f'{surpassed_hashtags} {hashtags}'
+        if current_hashtags:
+            hashtags = f'{current_hashtags} {hashtags}'
 
     # Build tweet
     tweet = textwrap.dedent(f'''
-        *{current_title}* just passed *{surpassed_title}* in popularity on @AniListco 🎉
+        {current_title} just passed {surpassed_title} in popularity on #AniList 🎉
 
-        It is now the {ordinal(current_position + 1)} most popular anime and has {current_popularity} members ✨
+        It is now the {helpers.ordinal(current_position + 1)} most popular anime and has {current_popularity} members ✨
 
         {hashtags}
 
