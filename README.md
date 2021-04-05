@@ -11,7 +11,12 @@ First, copy the `.env.example` file and configure your environment variables:
 $ cp .env.example .env
 ```
 
-To run the bot, install dependencies and run:
+Install Python dependencies:
+```bash
+$ pip3 install -r requirements.txt
+```
+
+Run the bot:
 ```bash
 $ python3 -m animetracker
 ```
