@@ -1,0 +1,4 @@
+python-dotenv==0.15.0
+requests==2.22.0
+schedule==1.0.0
+tweepy==3.10.0
