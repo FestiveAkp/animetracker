@@ -1,5 +1,7 @@
 .env
 *.json
+logs/
+nohup.out
 
 .vscode/
 
