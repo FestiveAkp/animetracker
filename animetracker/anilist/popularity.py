@@ -148,7 +148,7 @@ def make_tweet(current_anime, surpassed_anime):
 
     # Check if hashtags for both anime are the same
     hashtags = ''
-    if current_hashtags == surpassed_hashtags:
+    if current_hashtags and surpassed_hashtags and current_hashtags == surpassed_hashtags:
         hashtags = f'{current_hashtags} {hashtags}'
     else:
         if surpassed_hashtags:
